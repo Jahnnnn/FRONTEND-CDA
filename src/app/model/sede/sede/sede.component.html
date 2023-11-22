@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p-card header="Sede">
+
+        <div class="card">
+            <p-table #dt [value]="sedes" [paginator]="true" [showCurrentPageReport]="true" [rows]="10"
+                [rowsPerPageOptions]="[10, 25, 50]" [tableStyle]="{'min-width': '50rem'}"
+                [globalFilterFields]="['id', 'nombreSede', 'direccionSede', 'bloque.numeroDeBloque']"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex">
+                        <button pButton label="Nuevo" class="p-button-success" (click)="showDialogNewSede()"
+                            icon="pi pi-plus"></button>
+                        <div class="button-add">
+                            <span class="p-input-icon-left ml-auto">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text"
+                                    (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                                    placeholder="Buscar" />
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th pSortableColumn="id">Id <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="nombreSede">Nombre de la sede<p-sortIcon
+                                field="nombreSede"></p-sortIcon></th>
+                                <th pSortableColumn="direccionSede">Dirección de la sede<p-sortIcon
+                                    field="direccionSede"></p-sortIcon></th>
+                        <th pSortableColumn="bloque.numeroDeBloque">Número de bloque <p-sortIcon field="bloque.numeroDeBloque"></p-sortIcon></th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-sede let-columns="columns">
+                    <tr>
+                        <td>{{sede.id}}</td>
+                        <td>{{sede.nombreSede}}</td>
+                        <td>{{sede.direccionSede}}</td>
+                        <td>{{sede.bloque.numeroDeBloque}}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-eye" label="Ver" (click)="obtenerSedePorId(sede.id)"
+                                class="p-button-info buttons-crud"></button>
+                            <button pButton pRipple icon="pi pi-pencil" label="Editar"
+                                (click)="actualizarSede(sede.id)" class="p-button-secondary buttons-crud"></button>
+                            <button pButton pRipple icon="pi pi-trash" label="Eliminar"
+                                (click)="eliminarSede(sede.id)" class="p-button-danger"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-card>
+
+    <p-dialog header="Nueva sede" [(visible)]="visibleDialogNewSede" [style]="{width: '50vw', height: 'auto'}">
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Nombre</i>
+            </span>
+            <input pInputText [(ngModel)]="sede.nombreSede" placeholder="Nombre de la sede"/>
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Dirección</i>
+            </span>
+            <input pInputText [(ngModel)]="sede.direccionSede" placeholder="Dirección de la sede"/>
+        </div>
+        <br>
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="bloques" [(ngModel)]="sede.bloque" optionLabel="numeroDeBloque" [showClear]="true" placeholder="Selecciona un bloque"></p-dropdown>
+        </div>
+        <br><br>
+        <div class="button-save">
+            <button pButton pRipple icon="pi pi-save" label="Guardar" (click)="agregarSede()"
+                class="p-button-success"></button>
+        </div>
+    </p-dialog>
+
+    <p-dialog header="Ver sede" [(visible)]="visibleDialogViewSede" [style]="{width: '50vw'}">
+        <h2>Sede seleccionada</h2>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Id</i>
+            </span>
+            <input pInputText readonly [(ngModel)]="sede.id" placeholder="Id" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Nombre</i>
+            </span>
+            <input pInputText readonly type="text" [(ngModel)]="sede.nombreSede"
+                placeholder="Nombre de la sede" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Dirección</i>
+            </span>
+            <input pInputText readonly type="text" [(ngModel)]="sede.direccionSede"
+                placeholder="Dirección de la sede" />
+        </div>
+        <br>
+        <div class="card flex justify-content-center">
+            <p-dropdown [readonly]="true" [style]="{'width': '100%'}" [options]="bloques" [(ngModel)]="sede.bloque" optionLabel="numeroDeBloque" [showClear]="true" placeholder="Selecciona un bloque"></p-dropdown>
+        </div>
+        <br>
+    </p-dialog>
+
+    <p-dialog header="Editar sede" [(visible)]="visibleDialogEditSede" [style]="{width: '50vw'}">
+        <h2>Sede seleccionada</h2>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Id</i>
+            </span>
+            <input pInputText readonly [(ngModel)]="sede.id" placeholder="Id" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Nombre</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="sede.nombreSede" placeholder="Nombre de la sede" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Dirección</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="sede.direccionSede" placeholder="Dirección de la sede" />
+        </div>
+        <br>
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="bloques" [(ngModel)]="sede.bloque" optionLabel="numeroDeBloque" [showClear]="true" placeholder="Selecciona un bloque"></p-dropdown>
+        </div>
+        <br><br>
+        <div class="button-update">
+            <button pButton pRipple icon="pi pi-save" label="Actualizar" (click)="functionUpdate()"
+                class="p-button-success"></button>
+        </div>
+    </p-dialog>
+</body>
+
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p-card header="Personas">
+
+        <div class="card">
+            <p-table #dt [value]="personas" [paginator]="true" [showCurrentPageReport]="true" [rows]="10"
+                [rowsPerPageOptions]="[10, 25, 50]" [tableStyle]="{'min-width': '50rem'}"
+                [globalFilterFields]="['id', 'primerNombre', 'segundoNombre', 'primerApellido', 'segundoApellido', 'numeroDocumento']"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex">
+                        <button pButton label="Nuevo" class="p-button-success" (click)="showDialogNewPersona()"
+                            icon="pi pi-plus"></button>
+                        <div class="button-add">
+                            <span class="p-input-icon-left ml-auto">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text"
+                                    (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                                    placeholder="Buscar" />
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th pSortableColumn="id">Id <p-sortIcon field="id"></p-sortIcon></th>
+
+                        <th pSortableColumn="primerApellido">Primer apellido<p-sortIcon
+                                field="primerApellido"></p-sortIcon></th>
+
+                        <th pSortableColumn="primerNombre">Primer nombre<p-sortIcon
+                                field="primerNombre"></p-sortIcon></th>
+
+                        <th pSortableColumn="numeroDocumento">Número de documento<p-sortIcon field="numeroDocumento"></p-sortIcon>
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-persona let-columns="columns">
+                    <tr>
+                        <td>{{persona.id}}</td>
+                        <td>{{persona.primerApellido}}</td>
+                        <td>{{persona.primerNombre}}</td>
+                        <td>{{persona.numeroDocumento}}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-eye" label="Ver" (click)="obtenerPersonaPorId(persona.id)"
+                                class="p-button-info buttons-crud"></button>
+                            <button pButton pRipple icon="pi pi-pencil" label="Editar"
+                                (click)="actualizarPersona(persona.id)" class="p-button-secondary buttons-crud"></button>
+                            <button pButton pRipple icon="pi pi-trash" label="Eliminar"
+                                (click)="eliminarPersona(persona.id)" class="p-button-danger"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-card>
+
+    <p-dialog header="Nueva persona" [(visible)]="visibleDialogNewContacto" [style]="{width: '50vw'}">
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Primer nombre</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="persona.primerNombre" placeholder="Primer nombre" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Segundo nombre</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="persona.segundoNombre" placeholder="Segundo nombre" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Primer apellido</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="persona.primerApellido" placeholder="Primer apellido" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Segundo apellido</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="persona.segundoApellido" placeholder="Segundo apellido" />
+        </div>
+        <br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="tiposDocumento" [(ngModel)]="persona.tipoDocumento" optionLabel="sigla" [showClear]="true" placeholder="Selecciona un tipo de documento"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Documento</i>
+            </span>
+            <input pInputText type="number" [(ngModel)]="persona.numeroDocumento" placeholder="Número de documento" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Contraseña</i>
+            </span>
+            <input pInputText type="password" [(ngModel)]="persona.contrasena" placeholder="Contraseña" />
+        </div>
+        <br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="carnets" [(ngModel)]="persona.carnet" optionLabel="codigoUniversidad" [showClear]="true" placeholder="Selecciona un carnet"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="programas" [(ngModel)]="persona.programa" optionLabel="nombrePrograma" [showClear]="true" placeholder="Selecciona un programa"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="campuses" [(ngModel)]="persona.campus" optionLabel="nombreDelCampus" [showClear]="true" placeholder="Selecciona un campus"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="contactos" [(ngModel)]="persona.contacto" optionLabel="correoElectronico" [showClear]="true" placeholder="Selecciona un correo institucional"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="cargos" [(ngModel)]="persona.cargo" optionLabel="nombreCargo" [showClear]="true" placeholder="Selecciona un cargo"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="roles" [(ngModel)]="persona.rol" optionLabel="nombreRol" [showClear]="true" placeholder="Selecciona un rol"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="button-save">
+            <button pButton pRipple icon="pi pi-save" label="Guardar" (click)="agregarPersona()"
+                class="p-button-success"></button>
+        </div>
+    </p-dialog>
+
+    <p-dialog header="Ver persona" [(visible)]="visibleDialogViewContacto" [style]="{width: '50vw'}">
+        <h2>Persona seleccionada</h2>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Id</i>
+            </span>
+            <input pInputText readonly [(ngModel)]="persona.id" placeholder="Id" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Primer nombre</i>
+            </span>
+            <input pInputText readonly type="text" [(ngModel)]="persona.primerNombre" placeholder="Primer nombre" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Segundo nombre</i>
+            </span>
+            <input pInputText readonly type="text" [(ngModel)]="persona.segundoNombre" placeholder="Segundo nombre" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Primer apellido</i>
+            </span>
+            <input pInputText readonly type="text" [(ngModel)]="persona.primerApellido" placeholder="Primer apellido" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Segundo apellido</i>
+            </span>
+            <input pInputText readonly type="text" [(ngModel)]="persona.segundoApellido" placeholder="Segundo apellido" />
+        </div>
+        <br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [readonly]="true" [style]="{'width': '100%'}" [options]="tiposDocumento" [(ngModel)]="persona.tipoDocumento" optionLabel="sigla" [showClear]="true" placeholder="Selecciona un tipo de documento"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Documento</i>
+            </span>
+            <input pInputText readonly type="number" [(ngModel)]="persona.numeroDocumento" placeholder="Número de documento" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Contraseña</i>
+            </span>
+            <input pInputText readonly type="password" [(ngModel)]="persona.contrasena" placeholder="Contraseña" />
+        </div>
+        <br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [readonly]="true" [style]="{'width': '100%'}" [options]="carnets" [(ngModel)]="persona.carnet" optionLabel="codigoUniversidad" [showClear]="true" placeholder="Selecciona un carnet"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [readonly]="true" [style]="{'width': '100%'}" [options]="programas" [(ngModel)]="persona.programa" optionLabel="nombrePrograma" [showClear]="true" placeholder="Selecciona un programa"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [readonly]="true" [style]="{'width': '100%'}" [options]="campuses" [(ngModel)]="persona.campus" optionLabel="nombreDelCampus" [showClear]="true" placeholder="Selecciona un campus"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [readonly]="true" [style]="{'width': '100%'}" [options]="contactos" [(ngModel)]="persona.contacto" optionLabel="correoElectronico" [showClear]="true" placeholder="Selecciona un correo institucional"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [readonly]="true" [style]="{'width': '100%'}" [options]="cargos" [(ngModel)]="persona.cargo" optionLabel="nombreCargo" [showClear]="true" placeholder="Selecciona un cargo"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [readonly]="true" [style]="{'width': '100%'}" [options]="roles" [(ngModel)]="persona.rol" optionLabel="nombreRol" [showClear]="true" placeholder="Selecciona un rol"></p-dropdown>
+        </div>
+        <br><br>
+
+    </p-dialog>
+
+    <p-dialog header="Editar persona" [(visible)]="visibleDialogEditContacto" [style]="{width: '50vw'}">
+        <h2>Persona seleccionada</h2>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Id</i>
+            </span>
+            <input pInputText [(ngModel)]="persona.id" placeholder="Id" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Primer nombre</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="persona.primerNombre" placeholder="Primer nombre" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Segundo nombre</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="persona.segundoNombre" placeholder="Segundo nombre" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Primer apellido</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="persona.primerApellido" placeholder="Primer apellido" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Segundo apellido</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="persona.segundoApellido" placeholder="Segundo apellido" />
+        </div>
+        <br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="tiposDocumento" [(ngModel)]="persona.tipoDocumento" optionLabel="sigla" [showClear]="true" placeholder="Selecciona un tipo de documento"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Documento</i>
+            </span>
+            <input pInputText type="number" [(ngModel)]="persona.numeroDocumento" placeholder="Número de documento" />
+        </div>
+        <br>
+
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Contraseña</i>
+            </span>
+            <input pInputText type="password" [(ngModel)]="persona.contrasena" placeholder="Contraseña" />
+        </div>
+        <br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="carnets" [(ngModel)]="persona.carnet" optionLabel="codigoUniversidad" [showClear]="true" placeholder="Selecciona un carnet"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="programas" [(ngModel)]="persona.programa" optionLabel="nombrePrograma" [showClear]="true" placeholder="Selecciona un programa"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="campuses" [(ngModel)]="persona.campus" optionLabel="nombreDelCampus" [showClear]="true" placeholder="Selecciona un campus"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="contactos" [(ngModel)]="persona.contacto" optionLabel="correoElectronico" [showClear]="true" placeholder="Selecciona un correo institucional"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="cargos" [(ngModel)]="persona.cargo" optionLabel="nombreCargo" [showClear]="true" placeholder="Selecciona un cargo"></p-dropdown>
+        </div>
+        <br><br>
+
+        <div class="card flex justify-content-center">
+            <p-dropdown [style]="{'width': '100%'}" [options]="roles" [(ngModel)]="persona.rol" optionLabel="nombreRol" [showClear]="true" placeholder="Selecciona un rol"></p-dropdown>
+        </div>
+        <br><br>
+        <div class="button-update">
+            <button pButton pRipple icon="pi pi-save" label="Actualizar" (click)="functionUpdate()"
+                class="p-button-success"></button>
+        </div>
+    </p-dialog>
+</body>
+
+</html>

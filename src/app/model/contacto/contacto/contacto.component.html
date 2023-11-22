@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p-card header="Correos institucionales">
+
+        <div class="card">
+            <p-table #dt [value]="contactos" [paginator]="true" [showCurrentPageReport]="true" [rows]="10"
+                [rowsPerPageOptions]="[10, 25, 50]" [tableStyle]="{'min-width': '50rem'}"
+                [globalFilterFields]="['id', 'direccionResidencia', 'telefonoCelular', 'correoElectronico']"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex">
+                        <button pButton label="Nuevo" class="p-button-success" (click)="showDialogNewContacto()"
+                            icon="pi pi-plus"></button>
+                        <div class="button-add">
+                            <span class="p-input-icon-left ml-auto">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text"
+                                    (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                                    placeholder="Buscar" />
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th pSortableColumn="id">Id <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="direccionResidencia">Direccion de residencia<p-sortIcon
+                                field="direccionResidencia"></p-sortIcon></th>
+                        <th pSortableColumn="telefonoCelular">Teléfono<p-sortIcon
+                                field="telefonoCelular"></p-sortIcon></th>
+                        <th pSortableColumn="correoElectronico">Correo Electrónico<p-sortIcon field="correoElectronico"></p-sortIcon>
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-contacto let-columns="columns">
+                    <tr>
+                        <td>{{contacto.id}}</td>
+                        <td>{{contacto.direccionResidencia}}</td>
+                        <td>{{contacto.telefonoCelular}}</td>
+                        <td>{{contacto.correoElectronico}}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-eye" label="Ver" (click)="obtenerContactoPorId(contacto.id)"
+                                class="p-button-info buttons-crud"></button>
+                            <button pButton pRipple icon="pi pi-pencil" label="Editar"
+                                (click)="actualizarContacto(contacto.id)" class="p-button-secondary buttons-crud"></button>
+                            <button pButton pRipple icon="pi pi-trash" label="Eliminar"
+                                (click)="eliminarContacto(contacto.id)" class="p-button-danger"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-card>
+
+    <p-dialog header="Nuevo contacto" [(visible)]="visibleDialogNewContacto" [style]="{width: '50vw'}">
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Dirección</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="contacto.direccionResidencia" placeholder="Dirección de residencia" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Teléfono</i>
+            </span>
+            <input pInputText type="number" [(ngModel)]="contacto.telefonoCelular" placeholder="Teléfono celular" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Correo</i>
+            </span>
+            <input pInputText type="email" [(ngModel)]="contacto.correoElectronico" placeholder="Correo electrónico" />
+        </div>
+        <br>
+        <div class="button-save">
+            <button pButton pRipple icon="pi pi-save" label="Guardar" (click)="agregarContacto()"
+                class="p-button-success"></button>
+        </div>
+    </p-dialog>
+
+    <p-dialog header="Ver contacto" [(visible)]="visibleDialogViewContacto" [style]="{width: '50vw'}">
+        <h2>Contacto seleccionado</h2>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Id</i>
+            </span>
+            <input pInputText readonly [(ngModel)]="contacto.id" placeholder="Id" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Dirección</i>
+            </span>
+            <input pInputText readonly type="text" [(ngModel)]="contacto.direccionResidencia"
+                placeholder="Dirección de residencia" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Teléfono</i>
+            </span>
+            <input pInputText readonly type="number" [(ngModel)]="contacto.telefonoCelular" placeholder="Teléfono celular" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Correo</i>
+            </span>
+            <input pInputText readonly type="email" [(ngModel)]="contacto.correoElectronico" placeholder="Correo electrónico" />
+        </div>
+        <br>
+    </p-dialog>
+
+    <p-dialog header="Editar contacto" [(visible)]="visibleDialogEditContacto" [style]="{width: '50vw'}">
+        <h2>Contacto seleccionado</h2>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Id</i>
+            </span>
+            <input pInputText readonly [(ngModel)]="contacto.id" placeholder="Id" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Dirección</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="contacto.direccionResidencia" placeholder="Direccion de residencia" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Serial</i>
+            </span>
+            <input pInputText type="number" [(ngModel)]="contacto.telefonoCelular" placeholder="Teléfono celular" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Correo</i>
+            </span>
+            <input pInputText type="email" [(ngModel)]="contacto.correoElectronico" placeholder="Correo electrónico" />
+        </div>
+        <br>
+        <div class="button-update">
+            <button pButton pRipple icon="pi pi-save" label="Actualizar" (click)="functionUpdate()"
+                class="p-button-success"></button>
+        </div>
+    </p-dialog>
+</body>
+
+</html>

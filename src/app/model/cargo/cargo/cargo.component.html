@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p-card header="Cargo">
+
+        <div class="card">
+            <p-table #dt [value]="cargos" [paginator]="true" [showCurrentPageReport]="true" [rows]="10"
+                [rowsPerPageOptions]="[10, 25, 50]" [tableStyle]="{'min-width': '50rem'}"
+                [globalFilterFields]="['id', 'nombreCargo']"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex">
+                        <button pButton label="Nuevo" class="p-button-success" (click)="showDialogNewCargo()"
+                            icon="pi pi-plus"></button>
+                        <div class="button-add">
+                            <span class="p-input-icon-left ml-auto">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text"
+                                    (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                                    placeholder="Buscar" />
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th pSortableColumn="id">Id <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="nombreCargo">Nombre del cargo <p-sortIcon
+                                field="nombreCargo"></p-sortIcon></th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-cargo let-columns="columns">
+                    <tr>
+                        <td>{{cargo.id}}</td>
+                        <td>{{cargo.nombreCargo}}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-eye" label="Ver" (click)="obtenerCargoPorId(cargo.id)"
+                                class="p-button-info buttons-crud"></button>
+                            <button pButton pRipple icon="pi pi-pencil" label="Editar"
+                                (click)="actualizarCargo(cargo.id)" class="p-button-secondary buttons-crud"></button>
+                            <button pButton pRipple icon="pi pi-trash" label="Eliminar"
+                                (click)="eliminarCargo(cargo.id)" class="p-button-danger"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-card>
+
+    <p-dialog header="Nuevo cargo" [(visible)]="visibleDialogNewCargo" [style]="{width: '50vw'}">
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Nombre</i>
+            </span>
+            <input pInputText [(ngModel)]="cargo.nombreCargo" placeholder="Nombre del cargo"/>
+        </div>
+        <br>
+        <div class="button-save">
+            <button pButton pRipple icon="pi pi-save" label="Guardar" (click)="agregarCargo()"
+                class="p-button-success"></button>
+        </div>
+    </p-dialog>
+
+    <p-dialog header="Ver cargo" [(visible)]="visibleDialogViewCargo" [style]="{width: '50vw'}">
+        <h2>Cargo seleccionado</h2>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Id</i>
+            </span>
+            <input pInputText readonly [(ngModel)]="cargo.id" placeholder="Id" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Nombre</i>
+            </span>
+            <input pInputText readonly type="text" [(ngModel)]="cargo.nombreCargo"
+                placeholder="Nombre del cargo" />
+        </div>
+        <br>
+    </p-dialog>
+
+    <p-dialog header="Editar cargo" [(visible)]="visibleDialogEditCargo" [style]="{width: '50vw'}">
+        <h2>Cargo seleccionado</h2>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Id</i>
+            </span>
+            <input pInputText readonly [(ngModel)]="cargo.id" placeholder="Id" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Nombre</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="cargo.nombreCargo" placeholder="Nombre del cargo" />
+        </div>
+        <br>
+        <div class="button-update">
+            <button pButton pRipple icon="pi pi-save" label="Actualizar" (click)="functionUpdate()"
+                class="p-button-success"></button>
+        </div>
+    </p-dialog>
+</body>
+
+</html>

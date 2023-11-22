@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p-card header="Roles">
+
+        <div class="card">
+            <p-table #dt [value]="roles" [paginator]="true" [showCurrentPageReport]="true" [rows]="10"
+                [rowsPerPageOptions]="[10, 25, 50]" [tableStyle]="{'min-width': '50rem'}"
+                [globalFilterFields]="['id', 'nombreRol']"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex">
+                        <button pButton label="Nuevo" class="p-button-success" (click)="showDialogNewRol()"
+                            icon="pi pi-plus"></button>
+                        <div class="button-add">
+                            <span class="p-input-icon-left ml-auto">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text"
+                                    (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                                    placeholder="Buscar" />
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th pSortableColumn="id">Id <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="nombreRol">Nombre del rol<p-sortIcon
+                                field="nombreRol"></p-sortIcon></th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rol let-columns="columns">
+                    <tr>
+                        <td>{{rol.id}}</td>
+                        <td>{{rol.nombrePrograma}}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-eye" label="Ver"
+                                (click)="obtenerRolPorId(rol.id)" class="p-button-info buttons-crud"></button>
+                            <button pButton pRipple icon="pi pi-pencil" label="Editar"
+                                (click)="actualizarRol(rol.id)"
+                                class="p-button-secondary buttons-crud"></button>
+                            <button pButton pRipple icon="pi pi-trash" label="Eliminar"
+                                (click)="eliminarRol(rol.id)" class="p-button-danger"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-card>
+
+    <p-dialog header="Nuevo rol" [(visible)]="visibleDialogNewRol" [style]="{width: '50vw'}">
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Nombre</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="rol.nombreRol" placeholder="Nombre del rol" />
+        </div>
+        <br>
+        <div class="button-save">
+            <button pButton pRipple icon="pi pi-save" label="Guardar" (click)="agregarRol()"
+                class="p-button-success"></button>
+        </div>
+    </p-dialog>
+
+    <p-dialog header="Ver rol" [(visible)]="visibleDialogViewRol" [style]="{width: '50vw'}">
+        <h2>Rol seleccionado</h2>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Id</i>
+            </span>
+            <input pInputText readonly [(ngModel)]="rol.id" placeholder="Id" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Nombre</i>
+            </span>
+            <input pInputText readonly type="text" [(ngModel)]="rol.nombreRol"
+                placeholder="Nombre del rol" />
+        </div>
+        <br>
+    </p-dialog>
+
+    <p-dialog header="Editar rol" [(visible)]="visibleDialogEditRol" [style]="{width: '50vw'}">
+        <h2>Rol seleccionado</h2>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Id</i>
+            </span>
+            <input pInputText readonly [(ngModel)]="rol.id" placeholder="Id" />
+        </div>
+        <br>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i>Nombre</i>
+            </span>
+            <input pInputText type="text" [(ngModel)]="rol.nombreRol" placeholder="Nombre del rol" />
+        </div>
+        <br>
+        <div class="button-update">
+            <button pButton pRipple icon="pi pi-save" label="Actualizar" (click)="functionUpdate()"
+                class="p-button-success"></button>
+        </div>
+    </p-dialog>
+</body>
+
+</html>
